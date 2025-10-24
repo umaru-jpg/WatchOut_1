@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Watchout</title>
+    <link rel="website icon" type="png" href="img/jadi.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f7fafc; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-xl mx-auto mt-6 bg-white rounded-lg shadow-md overflow-hidden sm:px-6">
+        <div class="px-4 py-4 border-b">
+            <button onclick="history.back()" class="text-sm text-gray-600">&larr; Kembali</button>
+            <h1 class="text-lg font-bold text-gray-800 text-center">Checkout</h1>
+        </div>
+
+        <div class="px-4 py-4">
+            <!-- Single address box that opens modal -->
+            <div class="mb-4">
+                <h2 class="text-sm font-semibold mb-2">Alamat Pengiriman</h2>
+                <div id="address-box" class="border rounded-md p-3 bg-white cursor-pointer" role="button" tabindex="0">
+                    <div id="address-summary" class="text-sm text-gray-500">Klik untuk mengisi alamat pengiriman</div>
+                </div>
+            </div>
+
+            <!-- Variant selector -->
+            <div class="mb-4">
+                <h2 class="text-sm font-semibold mb-2">Pilih Variasi Warna</h2>
+                <div class="flex items-center space-x-3">
+                    <button type="button" data-color="black" class="variant-btn w-10 h-10 bg-gray-900 rounded-full border-2 border-transparent" aria-label="Hitam"></button>
+                    <button type="button" data-color="white" class="variant-btn w-10 h-10 bg-white rounded-full border-2 border-transparent" aria-label="Putih"></button>
+                    <button type="button" data-color="orange" class="variant-btn w-10 h-10 bg-orange-500 rounded-full border-2 border-transparent" aria-label="Oren"></button>
+                    <div id="selected-variant" class="ml-3 text-sm text-gray-600">Variasi: Dark Grey</div>
+                </div>
+            </div>
+            <!-- Item summary -->
+            <div class="flex items-center space-x-3 border rounded-lg p-3">
+                <img id="checkout-product-img" src="img/hitam.png" alt="Product" class="w-16 h-16 object-cover rounded-md">
+                <div class="flex-1">
+                    <div class="text-sm font-semibold">Watchout Series</div>
+                    <div id="item-variant-text" class="text-xs text-gray-500 mt-1">Variasi: Dark Grey</div>
+                    <div id="unit-price-text" class="text-sm font-bold text-gray-800 mt-2">Rp2.499.000</div>
+                </div>
+                <div class="relative">
+                    <div id="qty-controls" class="flex items-center">
+                        <button id="qty-dec" aria-label="Kurangi jumlah" class="hidden w-8 h-8 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center">-</button>
+                        <button id="qty-toggle" aria-label="Tampilkan kontrol jumlah" class="w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center mx-2">1</button>
+                        <button id="qty-inc" aria-label="Tambah jumlah" class="hidden w-8 h-8 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping option (dropdown) -->
+            <div class="mt-4">
+                <div class="text-sm font-semibold mb-2">Opsi Pengiriman</div>
+                <div class="border rounded-lg p-3 bg-gray-50">
+                    <select id="shipping-select" class="w-full p-2 border rounded-md text-sm">
+                        <option value="" selected>Pilih pengiriman</option>
+                        <option value="12000">Standard - Rp12.000 (estimasi 3-5 hari)</option>
+                        <option value="25000">Next Day - Rp25.000 (kirim esok hari)</option>
+                    </select>
+                    <div class="mt-3 flex justify-between items-center">
+                        <div>
+                            <div class="text-sm font-medium" id="shipping-name">-</div>
+                            <div class="text-xs text-gray-500" id="shipping-desc">Silakan pilih opsi pengiriman</div>
+                        </div>
+                        <div id="shipping-display" class="text-sm font-semibold">Rp0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mt-4">
+                <label class="text-sm font-medium">Pesan</label>
+                <textarea id="order-note" class="w-full mt-2 p-3 border rounded-md text-sm" placeholder="Silakan tinggalkan pesan..."></textarea>
+            </div>
+            <!-- Payment method (moved above Totals) -->
+            <div class="mt-4">
+                <div class="text-sm font-semibold mb-2">Metode Pembayaran</div>
+                <div class="bg-white border rounded-lg p-3">
+                    <fieldset id="payment-methods" class="space-y-3">
+                        <legend class="sr-only">Pilih metode pembayaran</legend>
+                        <label class="flex items-center p-3 border rounded-md cursor-pointer">
+                            <input type="radio" name="payment" value="transfer" checked class="form-radio h-4 w-4 text-blue-600 mr-3" />
+                            <div>
+                                <div class="text-sm font-medium">Transfer Bank / VA</div>
+                                <div class="text-xs text-gray-500">Debit, Kartu Virtual atau Virtual Account</div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center p-3 border rounded-md cursor-pointer">
+                            <input type="radio" name="payment" value="dana" class="form-radio h-4 w-4 text-blue-600 mr-3" />
+                            <div>
+                                <div class="text-sm font-medium">Dana</div>
+                                <div class="text-xs text-gray-500">Bayar dengan DANA</div>
+                            </div>
+                        </label>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="mt-4 border-t pt-4">
+                <div class="flex justify-between text-sm text-gray-600">
+                    <div>Subtotal untuk Produk</div>
+                    <div id="subtotal-product">Rp2.499.000</div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mt-2">
+                    <div>Subtotal Pengiriman</div>
+                    <div id="subtotal-shipping">Rp0</div>
+                </div>
+                <div class="flex justify-between text-lg font-bold text-gray-800 mt-3 border-t pt-3">
+                    <div>Total Pembayaran</div>
+                    <div id="total-pay">Rp2.499.000</div>
+                </div>
+            </div>
+
+            <!-- Place order (button will remain after payment options) -->
+
+            <!-- Place order -->
+            <div class="mt-4">
+                <button id="place-order" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold">BUAT PESANAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address modal -->
+    <div id="address-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white max-w-md w-full rounded-lg shadow-lg p-4 mx-4">
+            <h3 class="text-lg font-semibold mb-2">Isi Alamat Pengiriman</h3>
+            <div class="space-y-2">
+                <input id="modal-name" class="w-full p-3 border rounded-md text-sm" placeholder="Nama penerima" />
+                <input id="modal-phone" class="w-full p-3 border rounded-md text-sm" placeholder="Nomor telepon" />
+                <textarea id="modal-address" class="w-full p-3 border rounded-md text-sm" placeholder="Alamat lengkap (jalan, rt/rw, kec, kab)"></textarea>
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="modal-city" class="w-full p-3 border rounded-md text-sm" placeholder="Kota / Kabupaten" />
+                    <input id="modal-postal" class="w-full p-3 border rounded-md text-sm" placeholder="Kode pos" />
+                </div>
+            </div>
+            <div class="mt-3 flex justify-end space-x-2">
+                <button id="modal-cancel" class="px-4 py-2 rounded-md border">Batal</button>
+                <button id="modal-save" class="px-4 py-2 rounded-md bg-blue-600 text-white">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Address modal and persistence
+        (function(){
+            const addressBox = document.getElementById('address-box');
+            const addressModal = document.getElementById('address-modal');
+            const modalSave = document.getElementById('modal-save');
+            const modalCancel = document.getElementById('modal-cancel');
+
+            const fields = ['name','phone','address','city','postal'];
+
+            function openModal() {
+                addressModal.classList.remove('hidden');
+                addressModal.classList.add('flex');
+            }
+
+            function closeModal() {
+                addressModal.classList.add('hidden');
+                addressModal.classList.remove('flex');
+            }
+
+            function getSavedAddress() {
+                try { return JSON.parse(localStorage.getItem('watchout_address') || 'null'); } catch(e){ return null; }
+            }
+
+            function saveAddressToLocal(data) { localStorage.setItem('watchout_address', JSON.stringify(data)); }
+
+            function populateAddressBox(data) {
+                const summary = document.getElementById('address-summary');
+                if (!data) {
+                    summary.textContent = 'Klik untuk mengisi alamat pengiriman';
+                } else {
+                    summary.innerHTML = `
+                        <div class="font-medium">${data.name}</div>
+                        <div class="text-xs text-gray-600">${data.phone} • ${data.city} ${data.postal}</div>
+                        <div class="text-sm text-gray-700 mt-1">${data.address}</div>
+                    `;
+                }
+            }
+
+            // Open modal on box click
+            addressBox.addEventListener('click', openModal);
+            addressBox.addEventListener('keypress', (e) => { if (e.key === 'Enter' || e.key === ' ') openModal(); });
+
+            // Cancel
+            modalCancel.addEventListener('click', closeModal);
+
+            // Save
+            modalSave.addEventListener('click', () => {
+                const data = {
+                    name: document.getElementById('modal-name').value.trim(),
+                    phone: document.getElementById('modal-phone').value.trim(),
+                    address: document.getElementById('modal-address').value.trim(),
+                    city: document.getElementById('modal-city').value.trim(),
+                    postal: document.getElementById('modal-postal').value.trim(),
+                };
+
+                // Basic validation (name & address required)
+                if (!data.name || !data.address) {
+                    alert('Nama penerima dan alamat harus diisi.');
+                    return;
+                }
+
+                saveAddressToLocal(data);
+                populateAddressBox(data);
+                closeModal();
+            });
+
+            // Prefill modal if saved
+            const saved = getSavedAddress();
+            if (saved) {
+                document.getElementById('modal-name').value = saved.name || '';
+                document.getElementById('modal-phone').value = saved.phone || '';
+                document.getElementById('modal-address').value = saved.address || '';
+                document.getElementById('modal-city').value = saved.city || '';
+                document.getElementById('modal-postal').value = saved.postal || '';
+            }
+            populateAddressBox(saved);
+        })();
+
+        // Variant selector behavior
+        (function(){
+            const variants = {
+                'black': { img: 'img/hitam.png', label: 'Hitam' },
+                'white': { img: 'img/putih.png', label: 'Putih' },
+                'orange': { img: 'img/oren.png', label: 'Oren' }
+            };
+
+            const variantButtons = document.querySelectorAll('.variant-btn');
+            const checkoutImg = document.getElementById('checkout-product-img');
+            const selectedLabel = document.getElementById('selected-variant');
+            let activeColor = 'black';
+
+            function setActiveVariant(color) {
+                if (!variants[color]) return;
+                activeColor = color;
+                // update image and text
+                checkoutImg.src = variants[color].img;
+                checkoutImg.alt = `Watchout ${variants[color].label}`;
+                selectedLabel.textContent = 'Variasi: ' + variants[color].label;
+                // also update item summary variant text
+                const itemVariant = document.getElementById('item-variant-text');
+                if (itemVariant) itemVariant.textContent = 'Variasi: ' + variants[color].label;
+
+                // update button styles
+                variantButtons.forEach(btn => {
+                    if (btn.getAttribute('data-color') === color) {
+                        btn.style.borderColor = '#3b82f6';
+                        btn.style.boxShadow = '0 6px 12px rgba(59,130,246,0.18)';
+                        btn.style.transform = 'translateY(-2px) scale(1.05)';
+                    } else {
+                        btn.style.borderColor = 'transparent';
+                        btn.style.boxShadow = 'none';
+                        btn.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+
+            variantButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const c = btn.getAttribute('data-color');
+                    setActiveVariant(c);
+                });
+            });
+
+            // set initial
+            setActiveVariant(activeColor);
+        })();
+
+        // Basic place order handler (stub)
+        document.getElementById('place-order').addEventListener('click', function() {
+            const btn = this;
+            btn.textContent = 'Memproses...';
+            btn.disabled = true;
+
+            // read selected payment method
+            const sel = document.querySelector('input[name="payment"]:checked');
+            const paymentKey = sel ? sel.value : 'transfer';
+            const paymentLabels = { transfer: 'Transfer Bank', dana: 'Dana' };
+            const paymentLabel = paymentLabels[paymentKey] || paymentKey;
+
+            setTimeout(() => {
+                alert('Pesanan berhasil dibuat!\nMetode pembayaran: ' + paymentLabel);
+                window.location.href = 'index.html';
+            }, 1500);
+        });
+
+        // promote shipping to top-level variable so all pieces of the script can read/write it
+        let shipping = 0; // in integer rupiah, e.g. 12000
+
+        // Quantity controls and price calculation
+        (function(){
+            const qtyToggle = document.getElementById('qty-toggle');
+            const qtyInc = document.getElementById('qty-inc');
+            const qtyDec = document.getElementById('qty-dec');
+            const unitPriceText = document.getElementById('unit-price-text');
+            const totalPay = document.getElementById('total-pay');
+
+            let qty = 1;
+            // parse price like Rp2.499.000 -> number
+            function parseRp(text) {
+                return Number(text.replace(/[^0-9]/g, ''));
+            }
+
+            function formatRp(num) {
+                return 'Rp' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            const unitPrice = parseRp(unitPriceText.textContent || 'Rp2499000');
+
+            function updateDisplay() {
+                qtyToggle.textContent = qty;
+                const subtotal = unitPrice * qty;
+                const total = subtotal + (shipping || 0);
+                // update total and unit price displays
+                unitPriceText.textContent = formatRp(unitPrice);
+                const subtotalProductEl = document.getElementById('subtotal-product');
+                const subtotalShippingEl = document.getElementById('subtotal-shipping');
+                if (subtotalProductEl) subtotalProductEl.textContent = formatRp(subtotal);
+                if (subtotalShippingEl) subtotalShippingEl.textContent = formatRp(shipping || 0);
+                totalPay.textContent = formatRp(total);
+
+                // disable/enable decrement button
+                if (qty <= 1) {
+                    qtyDec.classList.add('hidden');
+                    qtyDec.setAttribute('aria-disabled', 'true');
+                    qtyDec.style.cursor = 'not-allowed';
+                } else {
+                    qtyDec.classList.remove('hidden');
+                    qtyDec.setAttribute('aria-disabled', 'false');
+                    qtyDec.style.cursor = 'pointer';
+                }
+                // increment button always visible when controls shown
+                if (!qtyInc.classList.contains('hidden')) {
+                    qtyInc.style.cursor = 'pointer';
+                }
+            }
+
+            // toggle visibility of inc/dec
+            qtyToggle.addEventListener('click', () => {
+                const showing = !qtyInc.classList.contains('hidden');
+                if (showing) {
+                    qtyInc.classList.add('hidden');
+                    qtyDec.classList.add('hidden');
+                } else {
+                    qtyInc.classList.remove('hidden');
+                    qtyDec.classList.remove('hidden');
+                }
+            });
+
+            // Hide controls when clicking/touching outside the qty-controls
+            const qtyControls = document.getElementById('qty-controls');
+            function hideQtyControlsIfOutside(e) {
+                if (!qtyControls) return;
+                if (!qtyControls.contains(e.target)) {
+                    qtyInc.classList.add('hidden');
+                    qtyDec.classList.add('hidden');
+                }
+            }
+            document.addEventListener('click', hideQtyControlsIfOutside);
+            document.addEventListener('touchstart', hideQtyControlsIfOutside);
+
+            qtyInc.addEventListener('click', () => {
+                qty += 1;
+                updateDisplay();
+            });
+
+            qtyDec.addEventListener('click', () => {
+                if (qty > 1) qty -= 1;
+                updateDisplay();
+            });
+
+            // initialize
+            updateDisplay();
+        })();
+        
+        // Shipping select handler (outside the qty IIFE so it's registered after DOM ready)
+        (function(){
+            const shipSelect = document.getElementById('shipping-select');
+            const shipDisplay = document.getElementById('shipping-display');
+            const shipName = document.getElementById('shipping-name');
+            const shipDesc = document.getElementById('shipping-desc');
+
+            function parseNumber(val){ return Number(val || 0); }
+
+            if (shipSelect) {
+                shipSelect.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (!val) {
+                        shipping = 0;
+                        shipDisplay.textContent = 'Rp0';
+                        shipName.textContent = '-';
+                        shipDesc.textContent = 'Silakan pilih opsi pengiriman';
+                    } else {
+                        shipping = parseNumber(val);
+                        shipDisplay.textContent = (function(n){ return 'Rp' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); })(shipping);
+                        if (val === '12000') {
+                            shipName.textContent = 'Standard';
+                            shipDesc.textContent = 'Estimasi 3-5 hari';
+                        } else if (val === '25000') {
+                            shipName.textContent = 'Next Day';
+                            shipDesc.textContent = 'Dikirim esok hari';
+                        }
+                    }
+                    // dispatch a custom recalc event so totals update using the shared `shipping` variable
+                    const evt = new Event('recalcTotals');
+                    document.dispatchEvent(evt);
+                });
+            }
+        })();
+
+        // Listen for recalcTotals event and update totals using same formatting logic
+        document.addEventListener('recalcTotals', () => {
+            const unitPriceText = document.getElementById('unit-price-text');
+            const subtotalProductEl = document.getElementById('subtotal-product');
+            const subtotalShippingEl = document.getElementById('subtotal-shipping');
+            const totalPay = document.getElementById('total-pay');
+            function parseRp(text) { return Number(text.replace(/[^0-9]/g, '')); }
+            function formatRp(num) { return 'Rp' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+            const unitPrice = parseRp(unitPriceText.textContent || 'Rp2499000');
+            const qtyToggle = document.getElementById('qty-toggle');
+            const qty = Number(qtyToggle ? qtyToggle.textContent : 1);
+            const subtotal = unitPrice * qty;
+            if (subtotalProductEl) subtotalProductEl.textContent = formatRp(subtotal);
+            if (subtotalShippingEl) subtotalShippingEl.textContent = formatRp(shipping || 0);
+            if (totalPay) totalPay.textContent = formatRp(subtotal + (shipping || 0));
+        });
+    </script>
+</body>
+</html>
